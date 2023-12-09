@@ -4,6 +4,8 @@ package com.br.DevRmv.At.Java.controller;
 import static com.br.DevRmv.At.Java.data.MockData.*;
 
 import com.br.DevRmv.At.Java.model.Jogador;
+import jakarta.annotation.Nullable;
+import org.apache.el.stream.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,14 +22,14 @@ public class JogadorController {
     Logger LOGGER = LoggerFactory.getLogger(JogadorController.class);
 
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public List<Jogador> getJogadores() {
-        LOGGER.info("GET->jogadores "+jogadores);
+        LOGGER.info("GET->JOGADORES "+jogadores);
         return jogadores;
     }
 
-    @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<?> getCpf(@PathVariable String cpf) {
+    @GetMapping("/{cpf}")
+    public ResponseEntity<?> getCpf(@PathVariable  String cpf) {
         Jogador jogador = jogadores
                 .stream()
                 .filter(j -> Integer.toString(j.getCpf()).equals(cpf))
@@ -43,7 +45,7 @@ public class JogadorController {
         }
     }
 
-    @PostMapping("/insert")
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> insert(@RequestBody Jogador jogador) {
         if (jogador != null) {
@@ -52,10 +54,11 @@ public class JogadorController {
             LOGGER.info("POST->INSERIR "+jogador);
             return ResponseEntity.ok(jogador);
         }
+        LOGGER.info("POST->INSERIR "+jogador);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível inserir. Favor rever dados");
     }
 
-    @GetMapping("/delete/{cpf}")
+    @DeleteMapping("/{cpf}")
     public ResponseEntity<?> delete(@PathVariable String cpf) {
         Jogador jogador = jogadores
                 .stream()
