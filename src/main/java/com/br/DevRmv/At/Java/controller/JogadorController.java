@@ -2,7 +2,9 @@ package com.br.DevRmv.At.Java.controller;
 
 import static com.br.DevRmv.At.Java.data.MockData.*;
 
+import com.br.DevRmv.At.Java.util.Gw2Util;
 import com.br.DevRmv.At.Java.model.Jogador;
+import com.br.DevRmv.At.Java.model.ListaDeItensTimeGatedDoGw2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,17 +22,28 @@ public class JogadorController {
     Logger LOGGER = LoggerFactory.getLogger(JogadorController.class);
 
 
-    @GetMapping
-    public List<Jogador> getJogadores() {
-        LOGGER.info("GET->JOGADORES " + jogadores);
-        return jogadores;
-    }
+    @GetMapping("/api")
+    public String getApiExterna() {
+        ListaDeItensTimeGatedDoGw2 listaDeItensTimeGatedDoGw2;
+        Gw2Util util=new Gw2Util();
+        listaDeItensTimeGatedDoGw2= util.getApiExterna();
+        //loop para mostrar que o objeto foi populado com os dados
+        listaDeItensTimeGatedDoGw2.getItensTimeGated().forEach((item->{
+            LOGGER.info("Item Time Gated no objeto Java: "+item);
+        }));
+        return "LEIA OS LOGS DO CONSOLE";
+    };
 
     /*
      * BUSCA COM 2 PARÂMETROS OPCIONAIS (cpf, nome) COMO PEDIDO NO AT
+     * Somente a "/" retorna tudo o que está na lista (jogadores)
      * */
     @GetMapping("/")
     public ResponseEntity<?> search(@RequestParam(required = false) String cpf, @RequestParam(required = false) String nome) {
+        if(cpf==null&&nome==null){
+            LOGGER.info("GET BUSCA VAZIA->JOGADORES " + jogadores);
+            return ResponseEntity.ok( jogadores);
+        }
         List<Jogador> resposta = new ArrayList<>();
         if (cpf != null) {
             Jogador jogador = jogadores
@@ -100,7 +113,12 @@ public class JogadorController {
                     jogador.setHoraCadastro(item.getHoraCadastro());
                 }
             });
+            if (jogador.getHoraCadastro()==null){
+                LOGGER.info("POST->UPDATE falho " + jogador);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CPF não encontrado");
+            }
             LOGGER.info("POST->UPDATE " + jogador);
+
             return ResponseEntity.ok(jogador);
         }
         LOGGER.info("POST->UPDATE " + jogador);
