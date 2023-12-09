@@ -12,4 +12,13 @@ public class Jogador {
     private String nome;
     private List<String> jogosNaSteam;
     private LocalDateTime horaCadastro;
+
+    public void toString(Jogador j){
+        System.out.println("--------------------------------");
+        System.out.println("CPF: "+j.getCpf());
+        System.out.println("NOME: "+j.getNome());
+        System.out.println("JOGOS NA STEAM: "+j.getJogosNaSteam().toString() );
+        System.out.println("DATA DE CADASTRO: "+j.getHoraCadastro());
+        System.out.println("--------------------------------");
+    }
 }
