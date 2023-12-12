@@ -78,7 +78,7 @@ public class JogadorController {
             jogador.setHoraCadastro(LocalDateTime.now());
             jogadores.add(jogador);
             LOGGER.info("POST->INSERIR " + jogador);
-            return ResponseEntity.ok(jogador);
+            return ResponseEntity.status(HttpStatus.CREATED).body(jogador);
         }
         LOGGER.info("POST->INSERIR " + jogador);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível inserir. Favor rever dados");
@@ -88,7 +88,8 @@ public class JogadorController {
     public ResponseEntity<?> delete(@PathVariable String cpf) {
         Jogador jogador = jogadores
                 .stream()
-                .filter(j -> Integer.toString(j.getCpf()).equals(cpf))
+                //.filter(j -> Integer.toString(j.getCpf()).equals(cpf))
+                .filter(j->j.getCpf()==Integer.parseInt(cpf))
                 .findFirst()
                 .orElse(null);
 
